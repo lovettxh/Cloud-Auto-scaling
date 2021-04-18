@@ -11,7 +11,8 @@ from io import BytesIO
 
 
 redis = Redis(host='localhost', port=6379)
-
+on = 0
+e = 1
 class auto_control():
 
     def __init__(self):
@@ -33,7 +34,7 @@ class auto_control():
     def monitor(self):
         count = 0
         s = 0
-        while(1):
+        while(e):
             count += 1
             try:
                 r = requests.post('http://10.2.10.38:8000/')
@@ -52,18 +53,17 @@ class auto_control():
 
     def auto_scale(self, t):
         s = self.check_threshold(t)
-        if (s == 1):
+        if (s == 1 and on == 1):
             self.size += 1
             self.web_service.reload()
             self.web_service.scale(self.size)
-            redis.rpush('scale',self.size)
             time.sleep(2)
-        elif (s == 2 and self.size > 1):
+        elif (s == 2 and self.size > 1 and on == 1):
             self.size -= 1
             self.web_service.reload()
             self.web_service.scale(self.size)
-            redis.rpush('scale',self.size)
             time.sleep(2)
+        redis.rpush('scale',self.size)
 
 
     def check_threshold(self, t):
@@ -91,7 +91,7 @@ class auto_control():
         return 0
 
 def count():
-    while(1):
+    while(e):
         c0 = int(redis.get('hits'))
         t0 = time.time()
         time.sleep(10)
@@ -112,12 +112,19 @@ class myThread(threading.Thread):
         elif(self.threadID == 2):
             count()
 
-
 if __name__ == "__main__":
     thread1 = myThread(1)
     thread2 = myThread(2)
     thread1.start()
     thread2.start()
+    while(e):
+        command = input("[On/Off/Exit]:")
+        if command == 'On' or command == 'on':
+            on = 1
+        elif command == 'Off' or command == 'off':
+            on = 0
+        elif command == 'Exit' or command == 'exit':
+            e = 0
     thread1.join()
     thread2.join()
     #a = auto_control()
