@@ -1,0 +1,55 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Dashboard {% endblock %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}
+    <link rel="stylesheet" href="/static/assets/plugins/chart-morris/css/morris.css">
+{% endblock stylesheets %}
+
+{% block content %}
+
+<!--declare min/max input range for elements-->
+    <div class="pcoded-content">
+        <div class="pcoded-inner-content">
+            <!-- [ breadcrumb ] start -->
+
+            <!-- [ breadcrumb ] end -->
+            <div class="main-body">
+                <div class="page-wrapper">
+                    <!-- [ Main Content ] start -->
+                    <div class="row">
+                        <!--[ Real Time Data ] start-->
+                        <div class="col-xl-8 col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>Real Time Data</h5>
+                                </div>
+                               
+                                <div class="card-block">
+                                    <label for="request-chart">Respuests/Second</label>
+                                    <div id="request-chart" class="ChartShadow" style="height:150px"></div>
+                                    <label for="response-chart">Response Time</label>
+                                    <div id="response-chart" style="height:150px"></div>
+                                    <label for="scale-chart">Server Scale</label>
+                                    <div id="scale-chart" style="height:150px"></div>
+                                   
+                                </div>
+                            </div>
+                        </div>
+                        <!--[ Real Time Data ] end-->
+                    </div>
+                    <!-- [ Main Content ] end -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+    <script src="/static/assets/plugins/chart-morris/js/raphael.min.js"></script>
+    <script src="/static/assets/plugins/chart-morris/js/morris.min.js"></script>
+    <script src="/static/assets/js/pages/line-chart.js"></script>
+{% endblock javascripts %}
