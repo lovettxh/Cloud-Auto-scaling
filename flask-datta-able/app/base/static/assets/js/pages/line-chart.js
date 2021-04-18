@@ -63,12 +63,12 @@ $(document).ready(function() {
 
 
                 request_rate.push({ time: current.getTime(), value: data.request_rate });
-                if (data.force_val != -1){
+                if (data.request_rate != -1){
                     request_chart.setData(request_rate);
                 }
                 
                 response_time.push({ time: current.getTime(), value: data.response_time});
-                if (data.velocity_val != -1){
+                if (data.response_time != -1){
                     response_chart.setData(response_time);
                 }
                 
