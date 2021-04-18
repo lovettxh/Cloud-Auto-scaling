@@ -13,6 +13,17 @@ from io import BytesIO
 redis = Redis(host='localhost', port=6379)
 on = 0
 e = 1
+
+def get_host_ip():
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(('8.8.8.8', 80))
+        ip = s.getsockname()[0]
+    finally:
+        s.close()
+
+    return ip
+
 class auto_control():
 
     def __init__(self):
@@ -36,6 +47,7 @@ class auto_control():
         s = 0
         while(e):
             count += 1
+            print(get_host_ip())
             try:
                 r = requests.post('http://10.2.10.38:8000/')
             except:
@@ -44,7 +56,6 @@ class auto_control():
 
             s += r.elapsed.total_seconds()
             if(count == 5):
-                #print(f'{s/5}')
                 redis.rpush('workload',s/5)
                 self.auto_scale(s/5)
                 s = 0
@@ -106,7 +117,7 @@ def count():
             c1 = int(c1)
         t1 = time.time()
         redis.rpush('requests',round((c1-c0)/(t1-t0), 1))
-        # print("hits/second:", round((c1-c0)/(t1-t0), 1))
+        
 
 
 class myThread(threading.Thread):
