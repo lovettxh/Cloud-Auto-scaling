@@ -63,20 +63,20 @@ $(document).ready(function() {
 
 
                 
-                if (data.request_rate > 0){
+                if (data.request_rate >= 0){
                     request_rate.push({ time: current.getTime(), value: data.request_rate });
                     request_chart.setData(request_rate);
                 }
                 
                 
-                if (data.response_time > 0){
+                if (data.response_time >= 0){
                     response_time.push({ time: current.getTime(), value: data.response_time});
                     response_chart.setData(response_time);
                 }
                 
                 
                 
-                if (data.server_scale > 0){
+                if (data.server_scale >= 0){
                     server_scale.push({ time: current.getTime(), value: data.server_scale });
                     scale_chart.setData(server_scale);
                 }
