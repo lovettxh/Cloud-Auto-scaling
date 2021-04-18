@@ -11,6 +11,8 @@ from redis import Redis
 from jinja2 import TemplateNotFound
 import random
 
+redis = Redis(host='localhost', port=6379)
+
 @blueprint.route('/index')
 @login_required
 def index():
