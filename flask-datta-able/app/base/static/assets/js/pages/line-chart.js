@@ -62,19 +62,22 @@ $(document).ready(function() {
                 }
 
 
-                request_rate.push({ time: current.getTime(), value: data.request_rate });
-                if (data.request_rate != -1){
+                
+                if (data.request_rate > 0){
+                    request_rate.push({ time: current.getTime(), value: data.request_rate });
                     request_chart.setData(request_rate);
                 }
                 
-                response_time.push({ time: current.getTime(), value: data.response_time});
-                if (data.response_time != -1){
+                
+                if (data.response_time > 0){
+                    response_time.push({ time: current.getTime(), value: data.response_time});
                     response_chart.setData(response_time);
                 }
                 
-                server_scale.push({ time: current.getTime(), value: data.server_scale });
                 
-                if (data.server_scale != -1){
+                
+                if (data.server_scale > 0){
+                    server_scale.push({ time: current.getTime(), value: data.server_scale });
                     scale_chart.setData(server_scale);
                 }
             }
