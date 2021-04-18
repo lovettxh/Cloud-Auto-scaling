@@ -47,12 +47,12 @@ class auto_control():
         s = 0
         while(e):
             count += 1
-            print(get_host_ip())
+
             try:
-                r = requests.post('http://10.2.10.38:8000/')
+                r = requests.post('http://'+ get_host_ip() + ':8000/')
             except:
                 time.sleep(1)
-                r = requests.post('http://10.2.10.38:8000/')
+                r = requests.post('http://'+ get_host_ip() + ':8000/')
 
             s += r.elapsed.total_seconds()
             if(count == 5):
