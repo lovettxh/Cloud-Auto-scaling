@@ -52,7 +52,7 @@ $(document).ready(function() {
             url: "/index/update/metadata",
             dataType: "json",
             success: function(data) {
-                //document.getElementById("remain_time").value = parseFloat(data.remain_time).toFixed(2);
+               
 
                 current = new Date();
                 if (request_rate.length == 16) {
@@ -62,19 +62,22 @@ $(document).ready(function() {
                 }
 
 
-                request_rate.push({ time: current.getTime(), value: data.request_rate });
-                if (data.force_val != -1){
+                
+                if (data.request_rate > 0){
+                	request_rate.push({ time: current.getTime(), value: data.request_rate });
                     request_chart.setData(request_rate);
                 }
                 
-                response_time.push({ time: current.getTime(), value: data.response_time});
-                if (data.velocity_val != -1){
+                
+                if (data.response_time > 0){
+                	response_time.push({ time: current.getTime(), value: data.response_time});
                     response_chart.setData(response_time);
                 }
                 
-                server_scale.push({ time: current.getTime(), value: data.server_scale });
                 
-                if (data.server_scale != -1){
+                
+                if (data.server_scale > 0){
+                	server_scale.push({ time: current.getTime(), value: data.server_scale });
                     scale_chart.setData(server_scale);
                 }
             }
