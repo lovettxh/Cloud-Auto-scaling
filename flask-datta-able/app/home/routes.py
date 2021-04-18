@@ -60,6 +60,23 @@ def get_segment( request ):
 def update_metadata():
     if request.method == 'POST':
         print("function call")
-        return jsonify(request_rate=random.randint(-10,10),
-                       response_time=random.randint(-10,10),
-                       server_scale=random.randint(-10,10))
+        temp = float(redis.lpop('requests'))
+        if temp != None:
+            return jsonify(request_rate=temp,
+                       response_time=-1,
+                       server_scale=-1)
+        temp = float(redis.lpop('workload'))
+        if temp != None:
+            return jsonify(request_rate=-1,
+                       response_time=temp,
+                       server_scale=-1)
+        temp = int(redis.lpop('scale'))
+        if temp != None:
+            return jsonify(request_rate=-1,
+                       response_time=-1,
+                       server_scale=temp)
+                       
+        return jsonify(request_rate=-1,
+                       response_time=-1,
+                       server_scale=-1)
+        

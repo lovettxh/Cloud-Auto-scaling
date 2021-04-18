@@ -22,6 +22,7 @@ class auto_control():
         self.high_count = 0
         self.low_count = 0
         self.size = 1
+        redis.rpush('scale',self.size)
         services = self.client.services.list()
         for i in services:
             if(i.name == 'my_app_web'):
@@ -42,7 +43,8 @@ class auto_control():
 
             s += r.elapsed.total_seconds()
             if(count == 5):
-                print(f'{s/5}-----{self.high_count}------{self.low_count}')
+                print(f'{s/5}')
+                redis.rpush('workload',s/5)
                 self.auto_scale(s/5)
                 s = 0
                 count = 0
@@ -54,11 +56,13 @@ class auto_control():
             self.size += 1
             self.web_service.reload()
             self.web_service.scale(self.size)
+            redis.rpush('scale',self.size)
             time.sleep(2)
         elif (s == 2 and self.size > 1):
             self.size -= 1
             self.web_service.reload()
             self.web_service.scale(self.size)
+            redis.rpush('scale',self.size)
             time.sleep(2)
 
 
@@ -93,7 +97,8 @@ def count():
         time.sleep(10)
         c1 = int(redis.get('hits'))
         t1 = time.time()
-        print("hits/second:", round((c1-c0)/(t1-t0), 1))
+        redis.rpush('requests',round((c1-c0)/(t1-t0), 1))
+        # print("hits/second:", round((c1-c0)/(t1-t0), 1))
 
 
 class myThread(threading.Thread):
