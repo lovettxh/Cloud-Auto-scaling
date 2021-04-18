@@ -3,19 +3,20 @@ import docker
 import requests
 import threading
 import time
-
+from redis import Redis
 import matplotlib.pyplot as plt
 import numpy as np
 import base64
 from io import BytesIO
 
 
+redis = Redis(host='localhost', port=6379)
 
 class auto_control():
 
     def __init__(self):
         self.client = docker.from_env()
-        self.high_threshold = 1.1
+        self.high_threshold = 1.2
         self.low_threshold = 0.3
         self.times = []
         self.high_count = 0
@@ -85,6 +86,37 @@ class auto_control():
             return 2
         return 0
 
+def count():
+    while(1):
+        c0 = int(redis.get('hits'))
+        t0 = time.time()
+        time.sleep(10)
+        c1 = int(redis.get('hits'))
+        t1 = time.time()
+        print("hits/second:", round((c1-c0)/(t1-t0), 1))
+
+
+class myThread(threading.Thread):
+    def __init__(self, threadID):
+        threading.Thread.__init__(self)
+        self.threadID = threadID
+    def run(self):
+        if(self.threadID == 1):
+            a = auto_control()
+            a.monitor()
+        elif(self.threadID == 2):
+            count()
+
+
 if __name__ == "__main__":
-    a = auto_control()
-    a.monitor()
+    thread1 = myThread(1)
+    thread2 = myThread(2)
+    thread1.start()
+    thread2.start()
+    thread1.join()
+    thread2.join()
+    #a = auto_control()
+    #a.monitor()
+
+        
+  

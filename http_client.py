@@ -38,7 +38,7 @@ def workload(user):
         try:
             requests.get('http://' + swarm_master_ip + ':8000/')
         except:
-            time.sleep(1)
+            time.sleep(2)
             requests.get('http://' + swarm_master_ip + ':8000/')
         t1 = time.time()
         time.sleep(think_time)
