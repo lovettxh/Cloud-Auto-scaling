@@ -60,22 +60,22 @@ def get_segment( request ):
 def update_metadata():
     if request.method == 'POST':
         print("function call")
-        temp = float(redis.lpop('requests'))
+        temp = redis.lpop('requests')
         if temp != None:
-            return jsonify(request_rate=temp,
+            return jsonify(request_rate=float(temp),
                        response_time=-1,
                        server_scale=-1)
-        temp = float(redis.lpop('workload'))
+        temp = redis.lpop('workload')
         if temp != None:
             return jsonify(request_rate=-1,
-                       response_time=temp,
+                       response_time=float(temp),
                        server_scale=-1)
-        temp = int(redis.lpop('scale'))
+        temp = redis.lpop('scale')
         if temp != None:
             return jsonify(request_rate=-1,
                        response_time=-1,
-                       server_scale=temp)
-                       
+                       server_scale=int(temp))
+
         return jsonify(request_rate=-1,
                        response_time=-1,
                        server_scale=-1)
