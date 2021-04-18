@@ -44,7 +44,7 @@ class auto_control():
 
             s += r.elapsed.total_seconds()
             if(count == 5):
-                print(f'{s/5}')
+                #print(f'{s/5}')
                 redis.rpush('workload',s/5)
                 self.auto_scale(s/5)
                 s = 0
