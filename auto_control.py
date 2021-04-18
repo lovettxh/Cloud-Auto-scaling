@@ -92,10 +92,18 @@ class auto_control():
 
 def count():
     while(e):
-        c0 = int(redis.get('hits'))
+        c0 = redis.get('hits')
+        if c0 == None:
+            c0 = 0
+        else:
+            c0 = int(c0)
         t0 = time.time()
         time.sleep(10)
-        c1 = int(redis.get('hits'))
+        c1 = redis.get('hits')
+        if c1 == None:
+            c1 = 0
+        else:
+            c1 = int(c1)
         t1 = time.time()
         redis.rpush('requests',round((c1-c0)/(t1-t0), 1))
         # print("hits/second:", round((c1-c0)/(t1-t0), 1))
