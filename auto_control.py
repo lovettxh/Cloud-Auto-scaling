@@ -62,7 +62,7 @@ class auto_control():
 
     def auto_scale(self, t):
         s = self.check_threshold(t)
-        if (s == 1 and self.size =< MAX_SIZE and on == 1):
+        if (s == 1 and self.size <= MAX_SIZE and on == 1):
             self.size += 1
             self.web_service.reload()
             self.web_service.scale(self.size)
