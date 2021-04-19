@@ -13,7 +13,7 @@ from io import BytesIO
 redis = Redis(host='localhost', port=6379)
 on = 0
 e = 1
-
+MAX_SIZE = 6
 def get_host_ip():
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -47,13 +47,11 @@ class auto_control():
         s = 0
         while(e):
             count += 1
-
             try:
                 r = requests.post('http://'+ get_host_ip() + ':8000/')
             except:
                 time.sleep(1)
                 r = requests.post('http://'+ get_host_ip() + ':8000/')
-
             s += r.elapsed.total_seconds()
             if(count == 5):
                 redis.rpush('workload',s/5)
@@ -64,7 +62,7 @@ class auto_control():
 
     def auto_scale(self, t):
         s = self.check_threshold(t)
-        if (s == 1 and on == 1):
+        if (s == 1 and self.size =< MAX_SIZE and on == 1):
             self.size += 1
             self.web_service.reload()
             self.web_service.scale(self.size)
