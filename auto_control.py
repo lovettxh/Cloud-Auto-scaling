@@ -42,17 +42,23 @@ class auto_control():
                 break
         self.web_service.scale(1)
 
+    """ This function monitor the 8000 port for response time.
+        It samples for five times each having an interval of 1s
+        to get the final response time"""
     def monitor(self):
         count = 0
         s = 0
         while(e):
             count += 1
+            # get response time
             try:
                 r = requests.post('http://'+ get_host_ip() + ':8000/')
             except:
                 time.sleep(1)
                 r = requests.post('http://'+ get_host_ip() + ':8000/')
+            # add all five response times
             s += r.elapsed.total_seconds()
+            
             if(count == 5):
                 redis.rpush('workload',s/5)
                 self.auto_scale(s/5)
@@ -60,8 +66,10 @@ class auto_control():
                 count = 0
             time.sleep(1)
 
+    """ This function checks if the server is now ready for a scale."""
     def auto_scale(self, t):
         s = self.check_threshold(t)
+        # scale out if signal is 1, server size has not exceeded max, auto scale is on
         if (s == 1 and self.size <= MAX_SIZE and on == 1):
             self.size += 1
             self.web_service.reload()
@@ -70,6 +78,7 @@ class auto_control():
             self.low_count = 0
             self.times = []
             time.sleep(2)
+        # scale out if signal is 2, server size is larger than 1, auto scale is on
         elif (s == 2 and self.size > 1 and on == 1):
             self.size -= 1
             self.web_service.reload()
@@ -80,28 +89,36 @@ class auto_control():
             time.sleep(2)
         redis.rpush('scale',self.size)
 
-
+    """ This function checks that whether the response time is in threshold range
+        and if the condition is satisfied for sacle in or out"""
     def check_threshold(self, t):
         self.times.append(t)
+        # self.high_count and self.low_count keep track of the number of elements 
+        # in the last 5 samples that are larger or lower than the upper or lower threshold
         if(t > self.high_threshold):
             self.high_count += 1
         elif(t < self.low_threshold):
             self.low_count += 1
+        # if the array length exceeds 5, pop the first element(oldest)
         if(len(self.times) > 5):
             temp = self.times.pop(0)
             if(temp > self.high_threshold):
                 self.high_count -= 1
             elif(temp < self.low_threshold):
                 self.low_count -= 1
+        # if one reaches three, signal for a scale
         if(self.high_count >= 3):
             return 1
         elif(self.low_count >= 3):
             return 2
         return 0
 
+""" count() function will keep track for how many requests are there in 
+    a given time interval and store it into the database."""
 def count():
     while(e):
         c0 = redis.get('hits')
+        # if 'hits' equals to 0, it will return None
         if c0 == None:
             c0 = 0
         else:
@@ -109,11 +126,13 @@ def count():
         t0 = time.time()
         time.sleep(10)
         c1 = redis.get('hits')
+        # if 'hits' equals to 0, it will return None
         if c1 == None:
             c1 = 0
         else:
             c1 = int(c1)
         t1 = time.time()
+        
         redis.rpush('requests',round((c1-c0)/(t1-t0), 1))
         
 
