@@ -28,7 +28,7 @@ class auto_control():
 
     def __init__(self):
         self.client = docker.from_env()
-        self.high_threshold = 1.2
+        self.high_threshold = 1.3
         self.low_threshold = 0.3
         self.times = []
         self.high_count = 0
@@ -66,11 +66,17 @@ class auto_control():
             self.size += 1
             self.web_service.reload()
             self.web_service.scale(self.size)
+            self.high_count = 0
+            self.low_count = 0
+            self.times = []
             time.sleep(2)
         elif (s == 2 and self.size > 1 and on == 1):
             self.size -= 1
             self.web_service.reload()
             self.web_service.scale(self.size)
+            self.high_count = 0
+            self.low_count = 0
+            self.times = []
             time.sleep(2)
         redis.rpush('scale',self.size)
 
@@ -88,14 +94,8 @@ class auto_control():
             elif(temp < self.low_threshold):
                 self.low_count -= 1
         if(self.high_count >= 3):
-            self.high_count = 0
-            self.low_count = 0
-            self.times = []
             return 1
         elif(self.low_count >= 3):
-            self.high_count = 0
-            self.low_count = 0
-            self.times = []
             return 2
         return 0
 
